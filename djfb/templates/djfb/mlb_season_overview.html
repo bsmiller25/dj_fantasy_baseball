@@ -1,4 +1,4 @@
-{% extends djfb/base.html %}
+{% extends 'djfb/base.html' %}
 
 {% block title %}DJFB{% endblock %}
 
@@ -10,6 +10,15 @@
 	<h1>MLB Structure for {{ season.year }}</h1>
 	{% for league in season.mlb_league_set.all %}
 	    <h3>{{ league.name }}</h3>
+	    {% for division in league.mlb_division_set.all %}
+		<li>{{ division.name }}
+		    <ul>
+			{% for team in division.mlb_team_set.all %}
+			    <li>{{ team.full_name }}</li>
+			{% endfor %}
+		    </ul>
+		</li>
+	    {% endfor %}
 	{% endfor %}
     </main>
 {% endblock %}
