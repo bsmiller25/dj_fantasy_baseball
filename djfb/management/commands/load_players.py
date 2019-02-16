@@ -37,7 +37,7 @@ class Command(BaseCommand):
                     'name_full': player['name_full'],
                     'name_use': player['name_use'],
                     'name_last': player['name_last'],
-                    'position_primary': player['primary_position'],
+                    'position': player['position_txt'],
                     'height_ft': player['height_feet'],
                     'height_in': player['height_inches'],
                     'weight': player['weight'],
@@ -52,6 +52,7 @@ class Command(BaseCommand):
                               )
                 }
 
+                print('Loading: ' + player['name_full'])
                 p = (Player
                      .objects
                      .get_or_create(gd_id=player['player_id'],
@@ -72,3 +73,9 @@ class Command(BaseCommand):
                      )
 
                 current_roster.append(r)
+
+            # add end date to players no longer on roster
+            for rost_pos in old_roster:
+                if rost_pos not in current_roster:
+                    rost_pos.end = datetime.datetime.today().date()
+                    ros_pos.save()

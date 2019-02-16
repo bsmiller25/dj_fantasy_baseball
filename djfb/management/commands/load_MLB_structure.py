@@ -28,6 +28,7 @@ class Command(BaseCommand):
                                            name=team['division'])[0]
                             )
 
+            print('Loading: ' + team['club_common_name'])
             mlb_team = (MLB_Team
                         .objects
                         .get_or_create(mlb_division=mlb_division,
