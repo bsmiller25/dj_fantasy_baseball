@@ -8,6 +8,14 @@
 {% block content %}
     <main>
 	<h1>{{ team.full_name }}</h1>
+
+	<h3>Current Roster</h3>
+
+	{% for rost in team.roster_set.all %}
+	    {% if not rost.player.end %}
+		<li>{{ rost.player }}</li>
+	    {% endif %}
+	{% endfor %}
 	
     </main>
 {% endblock %}

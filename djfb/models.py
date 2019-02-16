@@ -80,6 +80,9 @@ class Roster(models.Model):
     start = models.DateField()
     end = models.DateField(null=True, blank=True)
 
+    class Meta:
+        ordering = ['player__name_last']
+
     def __str__(self):
         return('{} - {}'.format(
             self.player.name_full,
