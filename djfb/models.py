@@ -55,17 +55,33 @@ class MLB_Team(models.Model):
 
 # Player models
 class Player(models.Model):
+    gd_id = models.IntegerField()
     name_full = models.CharField(max_length=50)
     name_use = models.CharField(max_length=50)
     name_last = models.CharField(max_length=50)
-    position_primary = models.IntegerField()
+    position = models.CharField(max_length=2)
     height_ft = models.IntegerField()
     height_in = models.IntegerField()
     weight = models.IntegerField()
     throws = models.CharField(max_length=2)
     bats = models.CharField(max_length=2)
-    debut = models.DateField()
+    debut = models.DateField(null=True, blank=True)
     birth = models.DateField()
 
     def __str__(self):
         return(self.name_full)
+
+
+class Roster(models.Model):
+    player = models.ForeignKey('Player',
+                               on_delete=models.CASCADE)
+    team = models.ForeignKey('MLB_Team',
+                             on_delete=models.CASCADE)
+    start = models.DateField()
+    end = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return('{} - {}'.format(
+            self.player.name_full,
+            self.team.full_name)
+        )
