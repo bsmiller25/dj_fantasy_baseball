@@ -14,7 +14,7 @@
 		<li>{{ division.name }}
 		    <ul>
 			{% for team in division.mlb_team_set.all %}
-			    <li>{{ team.full_name }}</li>
+			    <li><a href="/mlb/team/{{ team.id }}">{{ team.full_name }}</a></li>
 			{% endfor %}
 		    </ul>
 		</li>
