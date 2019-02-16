@@ -1,5 +1,6 @@
 # dj_fantasy_baseball
 
+A Django fantasy baseball platform using the [python gameday module](https://github.com/panzarino/mlbgame).
 
 ## INSTALLATION and SETUP
 
