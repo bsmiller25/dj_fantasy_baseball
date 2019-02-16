@@ -6,11 +6,11 @@ class MLB_Season(models.Model):
     year = models.IntegerField()
 
     def __str__(self):
-        return(self.year)
+        return(str(self.year))
 
 
 class MLB_League(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=50)
     mlb_season = models.ForeignKey('MLB_Season',
                                    on_delete=models.CASCADE)
 
@@ -21,13 +21,13 @@ class MLB_League(models.Model):
 
 
 class MLB_Division(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=50)
     mlb_league = models.ForeignKey('MLB_League',
                                    on_delete=models.CASCADE)
 
     def __str__(self):
         return('{} {} - {}'.format(self.mlb_league
-                                   .self.mlb_season.year,
+                                   .mlb_season.year,
                                    self.mlb_league.name,
                                    self.name)
                )
@@ -38,9 +38,10 @@ class MLB_Team(models.Model):
     common_name = models.CharField(max_length=50)
     url = models.CharField(max_length=50)
     team_id = models.IntegerField()
-    primary_color = models.Charfield(max_length=8)
+    primary_color = models.CharField(max_length=8)
     secondary_color = models.CharField(max_length=8)
     tertiary_color = models.CharField(max_length=8)
+
     mlb_division = models.ForeignKey('MLB_Division',
                                      on_delete=models.CASCADE)
 
