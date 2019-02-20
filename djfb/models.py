@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 
@@ -52,8 +53,9 @@ class MLB_Team(models.Model):
                                 .mlb_season.year)
                )
 
-
 # Player models
+
+
 class Player(models.Model):
     gd_id = models.IntegerField()
     name_full = models.CharField(max_length=50)
@@ -88,3 +90,88 @@ class Roster(models.Model):
             self.player.name_full,
             self.team.full_name)
         )
+
+
+# MLB games and stats
+class MLB_Game(models.Model):
+    gd_id = models.IntegerField()
+    date = models.DateTimeField()
+    away_team = models.ForeignKey('MLB_Team',
+                                  related_name='away_team_game_set',
+                                  on_delete=models.CASCADE)
+    home_team = models.ForeignKey('MLB_Team',
+                                  related_name='home_team_game_set',
+                                  on_delete=models.CASCADE)
+    away_team_runs = models.IntegerField()
+    home_team_runs = models.IntegerField()
+
+    def __str__(self):
+        return('{}: {} at {}'.format(
+            datetime.date.strftime(self.date),
+            self.away_team__name,
+            self.home_team__name
+        ))
+
+
+class Batter_Game(models.Model):
+    mlb_game = models.ForeignKey('MLB_Game',
+                                 on_delete=models.CASCADE)
+    player = models.ForeignKey('Player',
+                               on_delete=models.CASCADE)
+    h = models.IntegerField()
+    bb = models.IntegerField()
+    hbp = models.IntegerField()
+    single = models.IntegerField()
+    double = models.IntegerField()
+    triple = models.IntegerField()
+    hr = models.IntegerField()
+    r = models.IntegerField()
+    rbi = models.IntegerField()
+    sb = models.IntegerField()
+    so = models.IntegerField()
+    pitcher = models.BooleanField()
+    catcher = models.BooleanField()
+    first = models.BooleanField()
+    second = models.BooleanField()
+    third = models.BooleanField()
+    short = models.BooleanField()
+    left = models.BooleanField()
+    center = models.BooleanField()
+    right = models.BooleanField()
+    dh = models.BooleanField()
+
+    def __str__(self):
+        return('{}: {} at {} -- {}'.format(
+            datetime.date.strftime(self.date),
+            self.away_team__name,
+            self.home_team__name,
+            self.player__name_full
+        ))
+
+
+class Pitcher_Game(models.Model):
+    mlb_game = models.ForeignKey('MLB_Game',
+                                 on_delete=models.CASCADE)
+    player = models.ForeignKey('Player',
+                               on_delete=models.CASCADE)
+    w = models.BooleanField()
+    l = models.BooleanField()
+    sv = models.BooleanField()
+    ip = models.IntegerField()
+    so = models.IntegerField()
+    bb = models.IntegerField()
+    h = models.IntegerField()
+    hr = models.IntegerField()
+    er = models.IntegerField()
+    r = models.IntegerField()
+    bf = models.IntegerField()
+    bk = models.IntegerField()
+    game_score = models.IntegerField()
+
+    def __str__(self):
+        return('{}: {} at {} -- {}'.format(
+            datetime.date.strftime(self.date),
+            self.away_team__name,
+            self.home_team__name,
+            self.player__name_full
+        ))
