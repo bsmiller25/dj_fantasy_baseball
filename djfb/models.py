@@ -94,7 +94,7 @@ class Roster(models.Model):
 
 # MLB games and stats
 class MLB_Game(models.Model):
-    gd_id = models.IntegerField()
+    gd_id = models.CharField(max_length=50)
     date = models.DateTimeField()
     away_team = models.ForeignKey('MLB_Team',
                                   related_name='away_team_game_set',
@@ -104,12 +104,18 @@ class MLB_Game(models.Model):
                                   on_delete=models.CASCADE)
     away_team_runs = models.IntegerField()
     home_team_runs = models.IntegerField()
+    winning_team = models.ForeignKey('MLB_Team',
+                                     related_name='winning_team_game_set',
+                                     on_delete=models.CASCADE)
+    losing_team = models.ForeignKey('MLB_Team',
+                                    related_name='losing_team_game_set',
+                                    on_delete=models.CASCADE)
 
     def __str__(self):
         return('{}: {} at {}'.format(
-            datetime.date.strftime(self.date),
-            self.away_team__name,
-            self.home_team__name
+            datetime.date.strftime(self.date, '%Y-%m-%d'),
+            self.away_team.common_name,
+            self.home_team.common_name
         ))
 
 
@@ -118,6 +124,8 @@ class Batter_Game(models.Model):
                                  on_delete=models.CASCADE)
     player = models.ForeignKey('Player',
                                on_delete=models.CASCADE)
+    pa = models.IntegerField()
+    ab = models.IntegerField()
     h = models.IntegerField()
     bb = models.IntegerField()
     hbp = models.IntegerField()
@@ -142,10 +150,10 @@ class Batter_Game(models.Model):
 
     def __str__(self):
         return('{}: {} at {} -- {}'.format(
-            datetime.date.strftime(self.date),
-            self.away_team__name,
-            self.home_team__name,
-            self.player__name_full
+            datetime.date.strftime(self.mlb_game.date, '%Y-%m-%d'),
+            self.mlb_game.away_team.common_name,
+            self.mlb_game.home_team.common_name,
+            self.player.name_full
         ))
 
 
@@ -157,7 +165,7 @@ class Pitcher_Game(models.Model):
     w = models.BooleanField()
     l = models.BooleanField()
     sv = models.BooleanField()
-    ip = models.IntegerField()
+    outs = models.IntegerField()
     so = models.IntegerField()
     bb = models.IntegerField()
     h = models.IntegerField()
@@ -165,13 +173,12 @@ class Pitcher_Game(models.Model):
     er = models.IntegerField()
     r = models.IntegerField()
     bf = models.IntegerField()
-    bk = models.IntegerField()
     game_score = models.IntegerField()
 
     def __str__(self):
         return('{}: {} at {} -- {}'.format(
-            datetime.date.strftime(self.date),
-            self.away_team__name,
-            self.home_team__name,
-            self.player__name_full
+            datetime.date.strftime(self.mlb_game.date, '%Y-%m-%d'),
+            self.mlb_game.away_team.common_name,
+            self.mlb_game.home_team.common_name,
+            self.player.name_full
         ))

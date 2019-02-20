@@ -9,7 +9,8 @@ class Command(BaseCommand):
     help = 'Load MLB structure information'
     def handle(self, *args, **options):
 
-        year = datetime.datetime.now().year
+        #year = datetime.datetime.now().year
+        year = 2018
 
         mlb_season = MLB_Season.objects.get_or_create(year=year)[0]
 
