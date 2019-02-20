@@ -9,16 +9,21 @@ import pdb
 class Command(BaseCommand):
     help = 'Load games for a given day'
 
-  #  def add_arguments(self, parser):
-  #      parser.add_argument('year', type=int)
-  #      parser.add_argument('month', type=int)
-  #      parser.add_arguement'day', type=int)
+    def add_arguments(self, parser):
+
+        yesterday = datetime.date.today() - datetime.timedelta(1)
+        parser.add_argument('year', type=int,
+                            nargs='?', default=yesterday.year)
+        parser.add_argument('month', type=int,
+                            nargs='?', default=yesterday.month)
+        parser.add_argument('day', type=int,
+                            nargs='?', default=yesterday.day)
 
     def handle(self, *args, **options):
 
-        year = 2018
-        month = 9
-        day = 1
+        year = options['year']
+        month = options['month']
+        day = options['day']
 
         games = mlbgame.day(year, month, day)
 

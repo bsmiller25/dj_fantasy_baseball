@@ -9,7 +9,10 @@ class Command(BaseCommand):
     help = 'Load Players'
     def handle(self, *args, **options):
 
-        teams = MLB_Team.objects.all()
+        teams = (MLB_Team
+                 .objects
+                 .filter(mlb_division__mlb_league__mlb_season__year=datetime.date.today().year)
+                 )
 
         for team in teams:
 
@@ -78,4 +81,4 @@ class Command(BaseCommand):
             for rost_pos in old_roster:
                 if rost_pos not in current_roster:
                     rost_pos.end = datetime.datetime.today().date()
-                    ros_pos.save()
+                    rost_pos.save()
