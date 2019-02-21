@@ -9,23 +9,52 @@
     <main>
 	<h1>{{ player.name_full }}</h1>
 
-	<table>
-	    <thead>
-		<th>Avg</th>
-		<th>R</th>
-		<th>HR</th>
-		<th>RBI</th>
-		<th>SB</th>
-	    </thead>
-	    <tbody>
-		<td>{{ avg }}</td>
-		<td>{{ r }}</td>
-		<td>{{ hr }}</td>
-		<td>{{ rbi }}</td>
-		<td>{{ sb }}</td>
-	    </tbody>
-	</table>
+	{% if not bstats.pa and elig.p == 0 %}
+	    <h4>No games so no stats</h4>
+	{% endif %}
+
+	{% if bstats.pa > 0 %}
+	    <h4>Batting Stats</h4>
+	    <table>
+		<thead>
+		    <th>Avg</th>
+		    <th>R</th>
+		    <th>HR</th>
+		    <th>RBI</th>
+		    <th>SB</th>
+		</thead>
+		<tbody>
+		    <td>{{ bstats.avg }}</td>
+		    <td>{{ bstats.r }}</td>
+		    <td>{{ bstats.hr }}</td>
+		    <td>{{ bstats.rbi }}</td>
+		    <td>{{ bstats.sb }}</td>
+		</tbody>
+	    </table>
+	{% endif %}
+	
+	{% if elig.p > 0 %}
+	    <h4>Pitching Stats</h4>
+	    
+	    <table>
+		<thead>
+		    <th>W</th>
+		    <th>SV</th>
+		    <th>K</th>
+		    <th>ERA</th>
+		    <th>WHIP</th>
+		</thead>
+		<tbody>
+		    <td>{{ pstats.w }}</td>
+		    <td>{{ pstats.sv }}</td>
+		    <td>{{ pstats.so }}</td>
+		    <td>{{ pstats.era }}</td>
+		    <td>{{ pstats.whip }}</td>
+		</tbody>
+	    </table>
+	    
+	{% endif %}
 	
     </main>
 {% endblock %}
-    
+
