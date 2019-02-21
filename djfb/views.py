@@ -1,6 +1,8 @@
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import render
 from djfb.models import *
+import pdb
 
 
 def index(request):
@@ -31,5 +33,40 @@ def mlb_team_profile(request, team_id):
     return render(
         request,
         'djfb/mlb_team_profile.html',
+        context
+    )
+
+
+def player_profile(request, player_id):
+    player = Player.objects.get(id=player_id)
+
+    stats = (Batter_Game
+             .objects
+             .filter(player=player)
+             .aggregate(Sum('ab'),
+                        Sum('h'),
+                        Sum('r'),
+                        Sum('hr'),
+                        Sum('rbi'),
+                        Sum('sb'))
+             )
+
+    try:
+        avg = round(1.0 * stats['h__sum'] / stats['ab__sum'], 3)
+    except ZeroDivisionError:
+        avg = 0.000
+
+    context = {
+        'player': player,
+        'avg': avg,
+        'r': stats['r__sum'],
+        'hr': stats['hr__sum'],
+        'rbi': stats['rbi__sum'],
+        'sb': stats['sb__sum'],
+    }
+
+    return render(
+        request,
+        'djfb/player_profile.html',
         context
     )

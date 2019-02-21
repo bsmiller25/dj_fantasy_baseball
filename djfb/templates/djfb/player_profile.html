@@ -1,0 +1,31 @@
+{% extends 'djfb/base.html' %}
+
+{% block title %}DJFB{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <main>
+	<h1>{{ player.name_full }}</h1>
+
+	<table>
+	    <thead>
+		<th>Avg</th>
+		<th>R</th>
+		<th>HR</th>
+		<th>RBI</th>
+		<th>SB</th>
+	    </thead>
+	    <tbody>
+		<td>{{ avg }}</td>
+		<td>{{ r }}</td>
+		<td>{{ hr }}</td>
+		<td>{{ rbi }}</td>
+		<td>{{ sb }}</td>
+	    </tbody>
+	</table>
+	
+    </main>
+{% endblock %}
+    

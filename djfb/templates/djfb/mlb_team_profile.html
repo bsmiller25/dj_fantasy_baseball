@@ -13,7 +13,7 @@
 
 	{% for rost in team.roster_set.all %}
 	    {% if not rost.player.end %}
-		<li>{{ rost.player }}</li>
+		<li><a href="/player/{{ rost.player.id }}"> {{ rost.player }}</a></li>
 	    {% endif %}
 	{% endfor %}
 	
