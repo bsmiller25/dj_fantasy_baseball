@@ -9,51 +9,59 @@
     <main>
 	<h1>{{ player.name_full }}</h1>
 
-	{% if not bstats.pa and elig.p == 0 %}
+	{% if not elig %}
 	    <h4>No games so no stats</h4>
 	{% endif %}
 
-	{% if bstats.pa > 0 %}
-	    <h4>Batting Stats</h4>
-	    <table>
-		<thead>
-		    <th>Avg</th>
-		    <th>R</th>
-		    <th>HR</th>
-		    <th>RBI</th>
-		    <th>SB</th>
-		</thead>
-		<tbody>
-		    <td>{{ bstats.avg }}</td>
-		    <td>{{ bstats.r }}</td>
-		    <td>{{ bstats.hr }}</td>
-		    <td>{{ bstats.rbi }}</td>
-		    <td>{{ bstats.sb }}</td>
-		</tbody>
-	    </table>
-	{% endif %}
-	
-	{% if elig.p > 0 %}
-	    <h4>Pitching Stats</h4>
-	    
-	    <table>
-		<thead>
-		    <th>W</th>
-		    <th>SV</th>
-		    <th>K</th>
-		    <th>ERA</th>
-		    <th>WHIP</th>
-		</thead>
-		<tbody>
-		    <td>{{ pstats.w }}</td>
-		    <td>{{ pstats.sv }}</td>
-		    <td>{{ pstats.so }}</td>
-		    <td>{{ pstats.era }}</td>
-		    <td>{{ pstats.whip }}</td>
-		</tbody>
-	    </table>
-	    
-	{% endif %}
+	{% for bstats_yr in bstats %}
+	    {% if bstats_yr.pa > 0 %}
+		<h4>Batting Stats</h4>
+		<table>
+		    <thead>
+			<th>Season</th>
+			<th>Avg</th>
+			<th>R</th>
+			<th>HR</th>
+			<th>RBI</th>
+			<th>SB</th>
+		    </thead>
+		    <tbody>
+			<td>{{ bstats_yr.year.year }}</td>
+			<td>{{ bstats_yr.avg }}</td>
+			<td>{{ bstats_yr.r }}</td>
+			<td>{{ bstats_yr.hr }}</td>
+			<td>{{ bstats_yr.rbi }}</td>
+			<td>{{ bstats_yr.sb }}</td>
+		    </tbody>
+		</table>
+	    {% endif %}
+	{% endfor %}
+
+	{% for pstats_yr in pstats %}
+	    {% if pstats_yr.outs > 0 or pstats_yr.bb > 0 or pstats_yr.h > 0 %}
+		<h4>Pitching Stats</h4>
+		
+		<table>
+		    <thead>
+			<th>Season</th>
+			<th>W</th>
+			<th>SV</th>
+			<th>K</th>
+			<th>ERA</th>
+			<th>WHIP</th>
+		    </thead>
+		    <tbody>
+			<td>{{ pstats_yr.year.year }}</td>
+			<td>{{ pstats_yr.w }}</td>
+			<td>{{ pstats_yr.sv }}</td>
+			<td>{{ pstats_yr.so }}</td>
+			<td>{{ pstats_yr.era }}</td>
+			<td>{{ pstats_yr.whip }}</td>
+		    </tbody>
+		</table>
+		
+	    {% endif %}
+	{% endfor %}
 	
     </main>
 {% endblock %}

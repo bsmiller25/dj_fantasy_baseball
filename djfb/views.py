@@ -1,4 +1,5 @@
 from django.db.models import Sum, Avg, Q, F, Case, Count, When
+from django.db.models.functions import TruncYear
 from django.http import HttpResponse
 from django.shortcuts import render
 from djfb.models import *
@@ -45,7 +46,9 @@ def player_profile(request, player_id):
     elig = (Batter_Game
             .objects
             .filter(player=player)
-            .aggregate(
+            .annotate(year=TruncYear('mlb_game__date__year'))
+            .values('year')
+            .annotate(
                 p=Count(Case(When(pitcher=True, then=1))),
                 ut=Count(Case(When(pitcher=False, then=1))),
                 c=Count(Case(When(catcher=True, then=1))),
@@ -57,74 +60,85 @@ def player_profile(request, player_id):
                 cf=Count(Case(When(center=True, then=1))),
                 rf=Count(Case(When(right=True, then=1))),
                 dh=Count(Case(When(dh=True, then=1)))
-            ))
+            )
+            .order_by('year')
+            )
 
     # get hitting stats
     bstats = (Batter_Game
               .objects
               .filter(player=player)
-              .aggregate(pa=Sum('pa'),
-                         ab=Sum('ab'),
-                         h=Sum('h'),
-                         r=Sum('r'),
-                         hr=Sum('hr'),
-                         rbi=Sum('rbi'),
-                         sb=Sum('sb'),
-                         bb=Sum('bb'),
-                         singles=Sum('single'),
-                         doubles=Sum('double'),
-                         triples=Sum('triple'),
-                         )
+              .annotate(year=TruncYear('mlb_game__date__year'))
+              .values('year')
+              .annotate(pa=Sum('pa'),
+                        ab=Sum('ab'),
+                        h=Sum('h'),
+                        r=Sum('r'),
+                        hr=Sum('hr'),
+                        rbi=Sum('rbi'),
+                        sb=Sum('sb'),
+                        bb=Sum('bb'),
+                        singles=Sum('single'),
+                        doubles=Sum('double'),
+                        triples=Sum('triple'),
+                        )
+              .order_by('year')
               )
 
-    # batting average
-    try:
-        bstats['avg'] = round(1.0 * bstats['h'] / bstats['ab'], 3)
-    except (ZeroDivisionError, TypeError):
-        bstats['avg'] = 0.000
+    for bstats_yr in bstats:
+        # batting average
+        try:
+            bstats_yr['avg'] = round(1.0 * bstats_yr['h'] / bstats_yr['ab'], 3)
+        except (ZeroDivisionError, TypeError):
+            bstats_yr['avg'] = 0.000
 
-    # on base percentage
-    try:
-        bstats['obp'] = round((1.0 * bstats['h'] +
-                               bstats['bb']) / bstats['pa'], 3)
-    except (ZeroDivisionError, TypeError):
-        bstats['obp'] = 0.000
+            # on base percentage
+            try:
+                bstats_yr['obp'] = round((1.0 * bstats_yr['h'] +
+                                          bstats_yr['bb']) / bstats_yr['pa'], 3)
+            except (ZeroDivisionError, TypeError):
+                bstats_yr['obp'] = 0.000
 
-    # slugging percentage
-    try:
-        bstats['slg'] = round((1.0 * bstats['singles']
-                               + 2.0 * bstats['doubles']
-                               + 3.0 * bstats['triples']
-                               + 4.0 * bstats['hr']) / bstats['ab'], 3)
-    except (ZeroDivisionError, TypeError):
-        bstats['slg'] = 0.000
+            # slugging percentage
+            try:
+                bstats_yr['slg'] = round((1.0 * bstats_yr['singles']
+                                          + 2.0 * bstats_yr['doubles']
+                                          + 3.0 * bstats_yr['triples']
+                                          + 4.0 * bstats_yr['hr']) / bstats_yr['ab'], 3)
+            except (ZeroDivisionError, TypeError):
+                bstats_yr['slg'] = 0.000
 
     # get pitching stats
     pstats = (Pitcher_Game
               .objects
               .filter(player=player)
-              .aggregate(w=Count(Case(When(w=True, then=1))),
-                         l=Count(Case(When(l=True, then=1))),
-                         sv=Count(Case(When(sv=True, then=1))),
-                         so=Sum('so'),
-                         h=Sum('h'),
-                         bb=Sum('bb'),
-                         er=Sum('er'),
-                         outs=Sum('outs'))
+              .annotate(year=TruncYear('mlb_game__date__year'))
+              .values('year')
+              .annotate(
+                  w=Count(Case(When(w=True, then=1))),
+                  l=Count(Case(When(l=True, then=1))),
+                  sv=Count(Case(When(sv=True, then=1))),
+                  so=Sum('so'),
+                  h=Sum('h'),
+                  bb=Sum('bb'),
+                  er=Sum('er'),
+                  outs=Sum('outs'))
               )
 
-    # ERA
-    try:
-        pstats['era'] = round(9.0 * pstats['er'] / pstats['outs']/3, 3)
-    except (ZeroDivisionError, TypeError):
-        pstats['era'] = 0.000
+    for pstats_yr in pstats:
+        # ERA
+        try:
+            pstats_yr['era'] = round(
+                9.0 * pstats_yr['er'] / pstats_yr['outs']/3, 3)
+        except (ZeroDivisionError, TypeError):
+            pstats_yr['era'] = 0.000
 
-    # WHIP
-    try:
-        pstats['whip'] = round(
-            1.0 * (pstats['bb'] + pstats['h']) / pstats['outs']/3, 3)
-    except (ZeroDivisionError, TypeError):
-        pstats['whip'] = 0.000
+        # WHIP
+        try:
+            pstats_yr['whip'] = round(
+                1.0 * (pstats_yr['bb'] + pstats_yr['h']) / pstats_yr['outs']/3, 3)
+        except (ZeroDivisionError, TypeError):
+            pstats_yr['whip'] = 0.000
 
     context = {
         'player': player,
