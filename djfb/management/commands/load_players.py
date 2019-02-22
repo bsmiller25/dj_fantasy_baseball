@@ -6,12 +6,20 @@ import pdb
 
 
 class Command(BaseCommand):
-    help = 'Load Players'
+    help = 'Load Players to Rosters'
+
+    def add_arguments(self, parser):
+
+        parser.add_argument('year', type=int,
+                            nargs='?', default=datetime.date.today().year)
+
     def handle(self, *args, **options):
+
+        year = options['year']
 
         teams = (MLB_Team
                  .objects
-                 .filter(mlb_division__mlb_league__mlb_season__year=datetime.date.today().year)
+                 .filter(mlb_division__mlb_league__mlb_season__year=year)
                  )
 
         for team in teams:

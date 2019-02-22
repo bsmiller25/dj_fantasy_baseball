@@ -7,10 +7,15 @@ import pdb
 
 class Command(BaseCommand):
     help = 'Load MLB structure information'
+
+    def add_arguments(self, parser):
+
+        parser.add_argument('year', type=int,
+                            nargs='?', default=datetime.date.today().year)
+
     def handle(self, *args, **options):
 
-        #year = datetime.datetime.now().year
-        year = 2018
+        year = options['year']
 
         mlb_season = MLB_Season.objects.get_or_create(year=year)[0]
 
