@@ -71,6 +71,8 @@ class Command(BaseCommand):
                                 .get(full_name__icontains=game.w_team,
                                      mlb_division__mlb_league__mlb_season__year=year)
                                 )
+            except AttributeError:
+                continue
 
             try:
                 losing_team = (MLB_Team
@@ -112,12 +114,22 @@ class Command(BaseCommand):
 
             # batting stats
             for player_stats in stats.away_batting + stats.home_batting:
-                try:
-                    player = Player.objects.get(gd_id=player_stats.id)
-                except Player.DoesNotExist:
-                    print(('{} does not exist'
-                           .format(player_stats.name_display_first_last)))
-                    continue
+                player, created = (Player
+                                   .objects
+                                   .get_or_create(gd_id=player_stats.id))
+
+                if created:
+                    player.name_full = '{}, {}'.format(
+                        player_stats.name,
+                        (player_stats
+                         .name_display_first_last
+                         .split(' ')[0])
+                    )
+                    player.name_last = player_stats.name
+                    player.name_use = (player_stats
+                                       .name_display_first_last
+                                       .split(' ')[0])
+                    player.save()
 
                 print('Loading stats for {}'.format(player.name_full))
 

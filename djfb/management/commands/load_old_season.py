@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
         while d < datetime.datetime.strptime(lastgame, '%Y-%m-%d'):
             d += datetime.timedelta(1)
-            if d != datetime.datetime.strptime(all_star_date, '%Y-%m-%d'):
+            if d != datetime.datetime.strptime(asg, '%Y-%m-%d'):
                 call_command('load_day', d.year, d.month, d.day)
 
         print('Complete')
