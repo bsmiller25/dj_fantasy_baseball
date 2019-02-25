@@ -182,3 +182,30 @@ class Pitcher_Game(models.Model):
             self.mlb_game.home_team.common_name,
             self.player.name_full
         ))
+
+
+# Fantasy League Models
+
+class Fantasy_League(models.Model):
+    mlb_season = models.ForeignKey('MLB_Season', on_delete=models.CASCADE)
+    num_teams = models.IntegerField()
+    keeper = models.BooleanField()
+    trade_deadline = models.DateField()
+    scoring = models.CharField(max_length=4,
+                               choices= (
+                                   ('ROTO', 'Roto'),
+                                   ('PNT', 'Points'),
+                               ))
+                                   
+class Roto_Cat(models.Model):
+    fantasy_league = models.ForeignKey('fantasy_league', on_delete=models.CASCADE)
+    category = models.CharField(max_length=50)
+
+class Point_Val(models.Model):
+    fantasy_league = models.ForeignKey('fantasy_league', on_delete=models.CASCADE)
+    stat = models.CharField(max_length=10)
+    value = models.DecimalField(max_digits=5, decimal_places=2)
+    
+class Fantasy_Team(models.Model):
+    fantasy_league = models.ForeignKey('fantasy_league', on_delete=models.CASCADE)
+
