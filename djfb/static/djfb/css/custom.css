@@ -1,0 +1,18 @@
+ul.sidenav.sidenav-fixed li.logo {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px
+}
+#logo-container {
+    height: 100px;
+    margin-bottom: 32px
+}
+#front-page-logo {
+    display: inline-block;
+    height: 100%;
+    pointer-events: none
+}
+*,*:before,*:after {
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit
+}

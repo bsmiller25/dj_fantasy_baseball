@@ -7,7 +7,13 @@ import pdb
 
 
 def index(request):
-    return HttpResponse('Hello World')
+    context = {
+    }
+    return render(
+        request,
+        'djfb/index.html',
+        context
+    )
 
 
 def mlb_season_overview(request, season_yr):
